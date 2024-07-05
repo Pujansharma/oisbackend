@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const{connection}=require("./config")
 const {Router}=require("./routes")
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,7 +12,7 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 app.use(cors());
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/data",Router)
 
 

@@ -11,4 +11,13 @@ const formSchema = new mongoose.Schema({
 
 const Form = mongoose.model('Form', formSchema);
 
-module.exports = { Form };
+const ProjectSchema = new mongoose.Schema({
+    image: String,
+    description: String,
+    industry: String,
+    technology: String
+});
+
+const Project = mongoose.model('Project', ProjectSchema);
+
+module.exports = { Form, Project };
