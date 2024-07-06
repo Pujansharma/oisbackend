@@ -132,22 +132,6 @@ Router.get('/projects', async (req, res) => {
     }
 });
 // Create a new project
-Router.post('/projects', async (req, res) => {
-    const { image, description, industry, technology } = req.body;
-    const newProject = new Project({
-        image,
-        description,
-        industry,
-        technology
-    });
-
-    try {
-        const savedProject = await newProject.save();
-        res.json(savedProject);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 // Update an existing project by ID
 Router.put('/projects/:id', async (req, res) => {

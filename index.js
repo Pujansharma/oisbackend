@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const{connection}=require("./config")
-const {Router}=require("./routes")
+const { connection } = require("./config");
+const { Router } = require("./routes");
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
@@ -11,23 +11,18 @@ const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: 'http://oissoftware.com/ois/' // replace with your frontend domain
+}));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use("/data",Router)
+app.use("/data", Router);
 
-
-// Routes
-
-
-
-
-
-app.listen(port,async()=>{
+app.listen(port, async () => {
     try {
-        await connection
-        console.log({"mssg":"conneted to database"})
+        await connection;
+        console.log({ "msg": "connected to database" });
     } catch (error) {
-        console.log({error:"something went wrong"})
+        console.log({ error: "something went wrong" });
     }
-    console.log(`server is running on port ${process.env.port}`)
-})
+    console.log(`server is running on port ${port}`);
+});
