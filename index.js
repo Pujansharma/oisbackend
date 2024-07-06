@@ -12,7 +12,9 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 app.use(cors({
-    origin: 'http://oissoftware.com/ois/' // replace with your frontend domain
+    origin: 'http://oissoftware.com/ois/', // replace with your frontend domain
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // allow credentials if necessary
 }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/data", Router);
