@@ -176,14 +176,38 @@ Router.delete('/projects/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
-        const deletedProject = await Project.findByIdAndDelete(id);
-        if (!deletedProject) {
+        const project = await Project.findById(id);
+        if (!project) {
             return res.status(404).json({ error: 'Project not found' });
         }
-        res.json({ message: 'Project deleted successfully', deletedProject });
+
+        // Delete the image file if it exists
+        if (project.image) {
+            const fs = require('fs');
+            const path = require('path');
+            const imagePath = path.join(__dirname, '..', project.image);
+
+            console.log('Attempting to delete image at path:', imagePath);
+
+            if (fs.existsSync(imagePath)) {
+                fs.unlink(imagePath, (err) => {
+                    if (err) {
+                        console.error('Failed to delete image:', err);
+                    } else {
+                        console.log('Image deleted successfully');
+                    }
+                });
+            } else {
+                console.log('Image file does not exist:', imagePath);
+            }
+        }
+
+        await Project.findByIdAndDelete(id);
+        res.json({ message: 'Project deleted successfully', project });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 module.exports = { Router };

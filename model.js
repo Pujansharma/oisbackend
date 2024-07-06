@@ -14,6 +14,7 @@ const Form = mongoose.model('Form', formSchema);
 const ProjectSchema = new mongoose.Schema({
     image: String,
     description: String,
+    clientName:String,
     industry: String,
     technology: String
 });
