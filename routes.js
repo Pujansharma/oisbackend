@@ -3,6 +3,8 @@ const Router = express.Router();
 const { Form, Project } = require("./model"); // Assuming you have a Project model
 const jwt = require("jsonwebtoken");
 const multer = require('multer');
+const { v2: cloudinary } = require('cloudinary');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const fs = require('fs');
 require('dotenv').config();
 
@@ -82,47 +84,45 @@ Router.post('/login', (req, res) => {
 
 
 
-// Read all projects
-// Read all projects
-
-
 // Ensure the upload directory exists
-const uploadDir = './uploads';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-Router.use('/uploads', express.static(uploadDir));
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+  
 // Multer configuration for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'uploads',
+      format: async (req, file) => 'png', // Supports promises as well
+      public_id: (req, file) => Date.now().toString() + '-' + file.originalname,
     },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+  });
 const upload = multer({ storage: storage });
 
 // Create a new project
-Router.post('/projects', upload.single('image'), async (req, res) => {
-    const { description, industry, technology } = req.body;
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
-
+Router.post('/data/projects', upload.single('image'), async (req, res) => {
+    const { description, clientName, industry, technology } = req.body;
+    const imagePath = req.file.path; // Cloudinary URL
+  
     const newProject = new Project({
-        image: imageUrl,
-        description,
-        industry,
-        technology
+      image: imagePath,
+      description,
+      clientName,
+      industry,
+      technology,
     });
-
+  
     try {
-        const savedProject = await newProject.save();
-        res.json(savedProject);
+      await newProject.save();
+      res.json(newProject);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+      console.error('Error:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
-
+  });
 Router.get('/projects', async (req, res) => {
     try {
         const projects = await Project.find();

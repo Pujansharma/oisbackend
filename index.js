@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const{connection}=require("./config")
-const {Router}=require("./routes")
+const { connection } = require('./config');
+const { Router } = require('./routes');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
@@ -13,21 +13,14 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use("/data",Router)
+app.use('/data', Router);
 
-
-
-
-
-
-
-
-app.listen(port,async()=>{
+app.listen(port, async () => {
     try {
-        await connection
-        console.log({"mssg":"conneted to database"})
+        await connection;
+        console.log({ message: 'Connected to database' });
     } catch (error) {
-        console.log({error:"something went wrong"})
+        console.log({ error: 'Something went wrong' });
     }
-    console.log(`server is running on port ${process.env.port}`)
-})
+    console.log(`Server is running on port ${port}`);
+});
