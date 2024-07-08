@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { connection } = require('./config');
 const { Router } = require('./routes');
-const { ProjectRouter } = require('./tr');
+const { ProjectRouter } = require('./mi');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/data', Router);
-app.use('/data', ProjectRouter);
+app.use('/form', ProjectRouter);
 
 app.listen(port, async () => {
     try {
