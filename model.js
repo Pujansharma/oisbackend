@@ -47,4 +47,15 @@ const formDataSchema = new mongoose.Schema({
 });
 const FormData = mongoose.model('FormData', formDataSchema);
 
-module.exports = { Form, Project , Article, FormData};
+
+const dataSchema = new mongoose.Schema({
+    videoUrl: String,
+    thumbnailUrl: String,
+    name: String,
+    section: String,
+  });
+  
+  const Data = mongoose.model('Data', dataSchema);
+  
+
+module.exports = { Form, Project , Article, FormData, Data};

@@ -2,7 +2,8 @@ const express = require('express');
 const Router = express.Router();
 const { Project } = require('./model');
 const { Article } = require('./model');
-const {FormData} = require('./model')
+const {FormData} = require('./model');
+const { Data } = require('./model');
 const multer = require('multer');
 const { v2: cloudinary, config: cloudinaryConfig } = require('cloudinary');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
@@ -178,50 +179,37 @@ Router.delete('/articles/:id', async (req, res) => {
 });
 
 
-Router.post('/requestform', upload.single('upload'), async (req, res) => {
-    try {
-        const {
-          name,
-          email,
-          phone,
-          companyName,
-          country,
-          state,
-          projectType,
-          budget,
-          message,
-        } = req.body;
-    
-        const newFormEntry = new Form({
-          name,
-          email,
-          phone,
-          companyName,
-          country,
-          state,
-          projectType,
-          budget,
-          message,
-          filePath: req.file.path, // Save the file path to the database
-        });
-    
-        await newFormEntry.save();
-    
-        res.status(200).json({ message: 'Form submitted successfully' });
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        res.status(500).json({ message: 'Error submitting form' });
-      }
-    });
 
 // GET route to fetch all form data
-Router.get('/requestform', async (req, res) => {
+
+
+
+Router.get('/data', async (req, res) => {
     try {
-        const formData = await FormData.find();
-        res.json(formData);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
+      const data = await Data.find();
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-});
+  });
+  
+  // Route to add new data
+  Router.post('/data', async (req, res) => {
+    const { videoUrl, thumbnailUrl, name, section } = req.body;
+  
+    const newData = new Data({
+      videoUrl,
+      thumbnailUrl,
+      name,
+      section,
+    });
+  
+    try {
+      const savedData = await newData.save();
+      res.status(201).json(savedData);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
 
 module.exports = { Router };
